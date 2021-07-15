@@ -14,11 +14,11 @@ Add this line to your application's Gemfile:
 
 Run `bundle install`
 
-Register the page type:
+Register the plugin:
 
     # config/initializers/pageflow.rb
     Pageflow.configure do |config|
-      config.page_types.register(Pageflow::EmbeddedVideo.page_type)
+      config.plugin(Pageflow::EmbeddedVideo.plugin)
     end
 
 Include javascript/stylesheets:

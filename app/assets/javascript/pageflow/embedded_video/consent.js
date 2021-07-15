@@ -2,8 +2,9 @@ pageflow.embeddedVideo.consent = new (pageflow.Object.extend({
   accepted: {},
   registered: {},
 
-  ensureVendorRegistered: function(name) {
+  ensureVendorRegistered: function(options) {
     var that = this;
+    var name = options.name;
 
     if (this.registered[name]) {
       return;
@@ -12,7 +13,7 @@ pageflow.embeddedVideo.consent = new (pageflow.Object.extend({
     this.registered[name] = true;
 
     pageflow.consent.registerVendor(name, {
-      paradigm: 'lazy opt-in',
+      paradigm: options.skip ? 'skip' : 'lazy opt-in',
       displayName: I18n.t(
         'pageflow.public.embedded_video.consent.' + name + '.vendor_name'
       ),

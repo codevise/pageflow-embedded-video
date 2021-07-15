@@ -3,9 +3,10 @@
 pageflow.pageType.registerInitializer('embedded_video', function(configuration) {
   var url = configuration.display_embedded_video_url;
 
-  pageflow.embeddedVideo.consent.ensureVendorRegistered(
-    pageflow.embeddedVideo.providerFromUrl(url)
-  );
+  pageflow.embeddedVideo.consent.ensureVendorRegistered({
+    name: pageflow.embeddedVideo.providerFromUrl(url),
+    skip: !pageflow.features.isEnabled('embedded_video_opt_in')
+  });
 });
 
 pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend({
@@ -13,6 +14,10 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
 
   enhance: function(pageElement, configuration) {
     pageElement.thirdPartyEmbedConsent();
+
+    if (!pageflow.features.isEnabled('embedded_video_opt_in')) {
+      pageElement.find('.opt_out_wrapper').hide();
+    }
 
     var that = this;
 
