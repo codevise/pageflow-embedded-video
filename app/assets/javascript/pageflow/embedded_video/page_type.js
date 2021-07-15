@@ -31,6 +31,10 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
 
     if (pageflow.features.has('mobile platform')) {
       pageElement.find('.close_button, .iframe_container').click(function(event) {
+        if ($(event.target).parents('.third_party_embed_opt_in').length) {
+          return;
+        }
+
         event.stopPropagation();
         that._pauseVideo();
         pageElement.find('.iframe_container, .close_button').removeClass('show');
