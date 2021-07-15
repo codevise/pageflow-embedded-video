@@ -1,9 +1,19 @@
 /*global YT, URI, $f */
 
+pageflow.pageType.registerInitializer('embedded_video', function(configuration) {
+  var url = configuration.display_embedded_video_url;
+
+  pageflow.embeddedVideo.consent.ensureVendorRegistered(
+    pageflow.embeddedVideo.providerFromUrl(url)
+  );
+});
+
 pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend({
   prepareNextPageTimeout: 0,
 
   enhance: function(pageElement, configuration) {
+    pageElement.thirdPartyEmbedConsent();
+
     var that = this;
 
     pageElement.addClass('no_hidden_text_indicator');
@@ -101,22 +111,11 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
     var that = this,
         iframeWrapper = pageElement.find('.iframe_wrapper'),
         captionElement = pageElement.find('.video_caption'),
+        captionTextElement = pageElement.find('.video_caption_text'),
         caption = configuration.get('video_caption');
 
-    if ((caption || '').trim() !== '') {
-      if (!captionElement.length) {
-        captionElement = $('<div class="video_caption"></div>');
-
-        if (pageElement.find('.scroller iframe').length) {
-          captionElement.insertAfter(iframeWrapper);
-        } else {
-          captionElement.appendTo(iframeWrapper);
-        }
-      }
-      captionElement.text(caption || '');
-    } else {
-      captionElement.remove();
-    }
+    captionElement.toggleClass('video_caption_blank', (caption || '').trim() === '');
+    captionTextElement.text(caption || '');
 
     if (this.active) {
       if (configuration.hasChanged('display_embedded_video_url') ||
@@ -139,6 +138,13 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
     var that = this,
         url = configuration.display_embedded_video_url,
         provider = pageflow.embeddedVideo.providerFromUrl(url);
+
+    if (!pageflow.embeddedVideo.consent.accepted[provider]) {
+      pageflow.embeddedVideo.consent.once('accepted:' + provider, function() {
+        this._createPlayer(pageElement, configuration);
+      }, this);
+      return;
+    }
 
     if (provider === 'youtube') {
       this.ytApiInitialize().done(function () {
@@ -255,6 +261,8 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
   },
 
   _removePlayer: function (pageElement, callback) {
+    pageflow.embeddedVideo.consent.off(null, null, this);
+
     if (this.player && typeof this.player.destroy === 'function') {
       this.player.destroy();
     }

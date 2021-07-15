@@ -1,4 +1,5 @@
 //= require_self
+//= require ./embedded_video/consent
 //= require ./embedded_video/page_type
 //= require ./URI.js
 //= require ./froogaloop.js
