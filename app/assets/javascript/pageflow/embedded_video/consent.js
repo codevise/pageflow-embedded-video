@@ -1,12 +1,12 @@
 pageflow.embeddedVideo.consent = new (pageflow.Object.extend({
   accepted: {},
+  promises: {},
   registered: {},
 
   ensureVendorRegistered: function(options) {
-    var that = this;
     var name = options.name;
 
-    if (this.registered[name]) {
+    if (!name || this.registered[name]) {
       return;
     }
 
@@ -21,12 +21,21 @@ pageflow.embeddedVideo.consent = new (pageflow.Object.extend({
         'pageflow.public.embedded_video.consent.' + name + '.vendor_description'
       )
     });
+  },
 
-    pageflow.consent.requireAccepted(name).then(function(result) {
-      if (result == 'fulfilled') {
-        that.accepted[name] = true;
-        that.trigger('accepted:' + name);
-      }
-    });
+  setup: function(name) {
+    if (!name) {
+      return;
+    }
+
+    var that = this;
+
+    this.promises[name] = this.promises[name] ||
+      pageflow.consent.requireAccepted(name).then(function(result) {
+        if (result == 'fulfilled') {
+          that.accepted[name] = true;
+          that.trigger('accepted:' + name);
+        }
+      });
   }
 }));

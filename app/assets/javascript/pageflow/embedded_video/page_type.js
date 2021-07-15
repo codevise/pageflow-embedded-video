@@ -13,6 +13,12 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
   prepareNextPageTimeout: 0,
 
   enhance: function(pageElement, configuration) {
+    var url = configuration.display_embedded_video_url;
+
+    pageflow.embeddedVideo.consent.setup(
+      pageflow.embeddedVideo.providerFromUrl(url)
+    );
+
     pageElement.thirdPartyEmbedConsent();
 
     if (!pageflow.features.isEnabled('embedded_video_opt_in')) {
@@ -143,6 +149,10 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
     var that = this,
         url = configuration.display_embedded_video_url,
         provider = pageflow.embeddedVideo.providerFromUrl(url);
+
+    pageflow.embeddedVideo.consent.setup(
+      pageflow.embeddedVideo.providerFromUrl(url)
+    );
 
     if (!pageflow.embeddedVideo.consent.accepted[provider]) {
       pageflow.embeddedVideo.consent.once('accepted:' + provider, function() {
