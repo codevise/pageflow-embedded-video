@@ -1,15 +1,40 @@
 /*global YT, URI, $f */
 
+pageflow.pageType.registerInitializer('embedded_video', function(configuration) {
+  var url = configuration.display_embedded_video_url;
+
+  pageflow.embeddedVideo.consent.ensureVendorRegistered({
+    name: pageflow.embeddedVideo.providerFromUrl(url),
+    skip: !pageflow.features.isEnabled('embedded_video_opt_in')
+  });
+});
+
 pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend({
   prepareNextPageTimeout: 0,
 
   enhance: function(pageElement, configuration) {
+    var url = configuration.display_embedded_video_url;
+
+    pageflow.embeddedVideo.consent.setup(
+      pageflow.embeddedVideo.providerFromUrl(url)
+    );
+
+    pageElement.thirdPartyEmbedConsent();
+
+    if (!pageflow.features.isEnabled('embedded_video_opt_in')) {
+      pageElement.find('.opt_out_wrapper').hide();
+    }
+
     var that = this;
 
     pageElement.addClass('no_hidden_text_indicator');
 
     if (pageflow.features.has('mobile platform')) {
       pageElement.find('.close_button, .iframe_container').click(function(event) {
+        if ($(event.target).parents('.third_party_embed_opt_in').length) {
+          return;
+        }
+
         event.stopPropagation();
         that._pauseVideo();
         pageElement.find('.iframe_container, .close_button').removeClass('show');
@@ -101,22 +126,11 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
     var that = this,
         iframeWrapper = pageElement.find('.iframe_wrapper'),
         captionElement = pageElement.find('.video_caption'),
+        captionTextElement = pageElement.find('.video_caption_text'),
         caption = configuration.get('video_caption');
 
-    if ((caption || '').trim() !== '') {
-      if (!captionElement.length) {
-        captionElement = $('<div class="video_caption"></div>');
-
-        if (pageElement.find('.scroller iframe').length) {
-          captionElement.insertAfter(iframeWrapper);
-        } else {
-          captionElement.appendTo(iframeWrapper);
-        }
-      }
-      captionElement.text(caption || '');
-    } else {
-      captionElement.remove();
-    }
+    captionElement.toggleClass('video_caption_blank', (caption || '').trim() === '');
+    captionTextElement.text(caption || '');
 
     if (this.active) {
       if (configuration.hasChanged('display_embedded_video_url') ||
@@ -139,6 +153,17 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
     var that = this,
         url = configuration.display_embedded_video_url,
         provider = pageflow.embeddedVideo.providerFromUrl(url);
+
+    pageflow.embeddedVideo.consent.setup(
+      pageflow.embeddedVideo.providerFromUrl(url)
+    );
+
+    if (!pageflow.embeddedVideo.consent.accepted[provider]) {
+      pageflow.embeddedVideo.consent.once('accepted:' + provider, function() {
+        this._createPlayer(pageElement, configuration);
+      }, this);
+      return;
+    }
 
     if (provider === 'youtube') {
       this.ytApiInitialize().done(function () {
@@ -255,6 +280,8 @@ pageflow.react.registerPageTypeWithDefaultBackground('embedded_video', _.extend(
   },
 
   _removePlayer: function (pageElement, callback) {
+    pageflow.embeddedVideo.consent.off(null, null, this);
+
     if (this.player && typeof this.player.destroy === 'function') {
       this.player.destroy();
     }

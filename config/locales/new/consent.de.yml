@@ -1,0 +1,4 @@
+de:
+  pageflow:
+    embedded_video_opt_in:
+      feature_name: "Opt-In für YouTube/Vimeo Embeds"
