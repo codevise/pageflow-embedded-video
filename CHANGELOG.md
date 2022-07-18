@@ -1,10 +1,13 @@
 # CHANGELOG
 
-### Unreleased Changes
+### Version 1.8.0
 
-[Compare changes](https://github.com/codevise/pageflow-embedded-video/compare/1-7-stable...master)
+2022-07-18
 
-None so far.
+[Compare changes](https://github.com/codevise/pageflow-embedded-video/compare/1-7-stable...v1.8.0)
+
+- Embed opt-in
+  ([#37](https://github.com/codevise/pageflow-embedded-video/pull/37))
 
 See
 [1-7-stable branch](https://github.com/codevise/pageflow-embedded-video/blob/1-7-stable/CHANGELOG.md)

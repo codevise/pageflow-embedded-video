@@ -29,6 +29,8 @@ de:
       page_type_category_name: Media
       page_type_description: Bettet ein externes Video von YouTube oder Vimeo ein
       page_type_name: Embedded Video
+    embedded_video_opt_in:
+      feature_name: Opt-In für YouTube/Vimeo Embeds
     ui:
       configuration_editor:
         tabs:

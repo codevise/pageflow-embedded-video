@@ -29,6 +29,8 @@ en:
       page_type_category_name: Media
       page_type_description: Embed YouTube or Vimeo videos
       page_type_name: Embedded Video
+    embedded_video_opt_in:
+      feature_name: Opt-in for YouTube/Vimeo embeds
     ui:
       configuration_editor:
         tabs:
