@@ -1,7 +1,7 @@
 # Pageflow Embedded Video
 
 [![Gem Version](https://badge.fury.io/rb/pageflow-embedded-video.svg)](http://badge.fury.io/rb/pageflow-embedded-video)
-[![Build Status](https://travis-ci.org/codevise/pageflow-embedded-video.svg?branch=master)](https://travis-ci.org/codevise/pageflow-embedded-video)
+[![Build Status](https://github.com/codevise/pageflow-embedded-video/workflows/tests/badge.svg)](https://github.com/codevise/pageflow-embedded-video/actions)
 
 Page type showing Youtube/Vimeo videos in an embedded iframe.
 
