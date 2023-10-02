@@ -1,4 +1,5 @@
 require 'pageflow/embedded_video/engine'
+require 'pageflow/embedded_video/version'
 
 module Pageflow
   module EmbeddedVideo
