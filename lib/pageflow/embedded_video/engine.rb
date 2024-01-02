@@ -14,6 +14,7 @@ module Pageflow
         initializer 'pageflow_embedded_video.autoloading' do
           Rails.autoloaders.main.ignore(
             lib.join('pageflow-embedded-video.rb'),
+            lib.join('pageflow/embedded_video/configuration.rb'),
             lib.join('pageflow/embedded_video/version.rb')
           )
         end
