@@ -8,7 +8,7 @@ module Pageflow
       end
 
       def json_seed_template
-        'pageflow/embedded_video/page_type.json.jbuilder'
+        'pageflow/embedded_video/page_type'
       end
     end
   end
